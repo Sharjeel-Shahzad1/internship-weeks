@@ -63,13 +63,32 @@ def split_dataset(
     labels = np.asarray(labels)
     if len(images) != len(labels):
         raise ValueError("images and labels must contain the same number of samples")
-    return train_test_split(
-        images,
-        labels,
-        test_size=test_size,
-        random_state=random_state,
-        stratify=labels,
-    )
+
+    unique_labels = np.unique(labels)
+    test_count = len(labels) * test_size if 0.0 < test_size < 1.0 else int(test_size)
+    if len(unique_labels) > 0 and test_count < len(unique_labels):
+        return train_test_split(
+            images,
+            labels,
+            test_size=test_size,
+            random_state=random_state,
+        )
+
+    try:
+        return train_test_split(
+            images,
+            labels,
+            test_size=test_size,
+            random_state=random_state,
+            stratify=labels,
+        )
+    except ValueError:
+        return train_test_split(
+            images,
+            labels,
+            test_size=test_size,
+            random_state=random_state,
+        )
 
 
 def preprocess_and_save(

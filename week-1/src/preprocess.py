@@ -15,17 +15,33 @@ _LABEL_COLUMNS = ("label", "category", "class", "target", "v1")
 _TEXT_COLUMNS = ("message", "text", "email", "content", "v2")
 
 
+_NLTK_READY = False
+
+
 def ensure_nltk_resources() -> None:
     """Download the NLTK resources required for preprocessing if they are missing."""
-    for resource, package in (("corpora/stopwords", "stopwords"), ("tokenizers/punkt", "punkt")):
+    global _NLTK_READY
+    if _NLTK_READY:
+        return
+    for resource, package in (
+        ("corpora/stopwords", "stopwords"),
+        ("tokenizers/punkt", "punkt"),
+        ("tokenizers/punkt_tab", "punkt_tab"),
+    ):
         try:
             nltk.data.find(resource)
         except LookupError:
             nltk.download(package, quiet=True)
+    _NLTK_READY = True
 
 
 def load_dataset(csv_path: str | Path = DEFAULT_RAW_PATH) -> pd.DataFrame:
-    return pd.read_csv(csv_path)
+    for encoding in ("utf-8", "latin-1", "iso-8859-1", "cp1252"):
+        try:
+            return pd.read_csv(csv_path, encoding=encoding)
+        except (UnicodeDecodeError, UnicodeError):
+            continue
+    return pd.read_csv(csv_path, encoding="latin-1", errors="replace")
 
 
 def resolve_columns(df: pd.DataFrame, label_col: str | None = None, text_col: str | None = None) -> tuple[str, str]:
