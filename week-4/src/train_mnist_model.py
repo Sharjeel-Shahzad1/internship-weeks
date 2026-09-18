@@ -20,25 +20,67 @@ MODEL_DIR = REPOSITORY_ROOT / "week-4" / "models"
 
 def load_week3_arrays(data_dir: Path = WEEK3_DATA) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Load train/test arrays saved by the Week 3 preprocessing work."""
-    processed_path = data_dir / "mnist_processed.npz"
-    if processed_path.exists():
-        with np.load(processed_path) as arrays:
-            required = {"x_train", "x_test", "y_train", "y_test"}
-            missing = required.difference(arrays.files)
-            if missing:
-                raise ValueError(f"{processed_path} is missing arrays: {sorted(missing)}")
-            return tuple(arrays[name] for name in ("x_train", "x_test", "y_train", "y_test"))  # type: ignore[return-value]
+    candidates = [
+        data_dir,
+        REPOSITORY_ROOT / "week-3" / "data",
+        REPOSITORY_ROOT / "week-4" / "data",
+        REPOSITORY_ROOT / "week-4" / "MNIST-Dataset",
+        REPOSITORY_ROOT / "week-3" / "MNIST-Dataset",
+    ]
+    seen: set[Path] = set()
+    unique_candidates = [c for c in candidates if not (c in seen or seen.add(c))]
 
-    separate_names = ("x_train.npy", "x_test.npy", "y_train.npy", "y_test.npy")
-    separate_paths = [data_dir / name for name in separate_names]
-    if all(path.exists() for path in separate_paths):
-        return tuple(np.load(path) for path in separate_paths)  # type: ignore[return-value]
+    for candidate in unique_candidates:
+        processed_path = candidate / "mnist_processed.npz"
+        if processed_path.exists():
+            with np.load(processed_path) as arrays:
+                required = {"x_train", "x_test", "y_train", "y_test"}
+                missing = required.difference(arrays.files)
+                if not missing:
+                    return tuple(arrays[name] for name in ("x_train", "x_test", "y_train", "y_test"))  # type: ignore[return-value]
 
-    expected = " or ".join((str(processed_path), ", ".join(separate_names)))
+        separate_names = ("x_train.npy", "x_test.npy", "y_train.npy", "y_test.npy")
+        separate_paths = [candidate / name for name in separate_names]
+        if all(path.exists() for path in separate_paths):
+            return tuple(np.load(path) for path in separate_paths)  # type: ignore[return-value]
+
+    # If processed arrays not found but CSV files exist, load and preprocess automatically
+    import pandas as pd
+    for candidate in unique_candidates:
+        train_csv = candidate / "mnist_train.csv"
+        test_csv = candidate / "mnist_test.csv"
+        if train_csv.exists():
+            print(f"Preprocessing raw CSV data from {candidate}...")
+            train_df = pd.read_csv(train_csv)
+            y_train = train_df.iloc[:, 0].to_numpy(dtype=np.int64)
+            x_train = (train_df.iloc[:, 1:].to_numpy(dtype=np.float32)) / 255.0
+
+            if test_csv.exists():
+                test_df = pd.read_csv(test_csv)
+                y_test = test_df.iloc[:, 0].to_numpy(dtype=np.int64)
+                x_test = (test_df.iloc[:, 1:].to_numpy(dtype=np.float32)) / 255.0
+            else:
+                from sklearn.model_selection import train_test_split
+                x_train, x_test, y_train, y_test = train_test_split(
+                    x_train, y_train, test_size=0.2, random_state=42, stratify=y_train
+                )
+
+            save_path = data_dir / "mnist_processed.npz"
+            save_path.parent.mkdir(parents=True, exist_ok=True)
+            np.savez_compressed(
+                save_path,
+                x_train=x_train,
+                x_test=x_test,
+                y_train=y_train,
+                y_test=y_test,
+            )
+            return x_train, x_test, y_train, y_test
+
     raise FileNotFoundError(
-        "Week 3 processed data was not found. Run week-3/notebooks/mnist_eda.ipynb "
-        f"first so that {expected} is available."
+        "Week 3 processed data was not found. Looked in: "
+        + ", ".join(str(p) for p in unique_candidates)
     )
+
 
 
 def train_models(
