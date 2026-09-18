@@ -314,11 +314,11 @@ def tune_wednesday_svm(
     print("=" * 65)
 
     param_grid = [
-        {"kernel": ["linear"], "C": [0.1, 1.0, 2.0, 5.0, 10.0, 50.0]},
+        {"kernel": ["linear"], "C": [0.1, 1.0, 2.0, 5.0, 10.0]},
         {
             "kernel": ["rbf"],
-            "C": [0.1, 1.0, 2.0, 5.0, 10.0, 50.0],
-            "gamma": ["scale", "auto", 0.05, 0.1, 0.2, 0.5, 1.0],
+            "C": [0.1, 1.0, 2.0, 5.0, 10.0],
+            "gamma": [0.1, 0.15, 0.2, 0.5, "scale", "auto"],
         },
         {
             "kernel": ["poly"],
@@ -781,3 +781,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

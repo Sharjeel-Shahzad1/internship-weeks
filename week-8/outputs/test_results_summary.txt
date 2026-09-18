@@ -21,12 +21,12 @@ Date: 2026-09-18
                  precision    recall  f1-score   support
 
     Iris-setosa     1.0000    1.0000    1.0000        10
-Iris-versicolor     1.0000    0.8889    0.9412         9
- Iris-virginica     0.9167    1.0000    0.9565        11
+Iris-versicolor     1.0000    1.0000    1.0000         9
+ Iris-virginica     1.0000    1.0000    1.0000        11
 
-       accuracy                         0.9667        30
-      macro avg     0.9722    0.9630    0.9659        30
-   weighted avg     0.9694    0.9667    0.9664        30
+       accuracy                         1.0000        30
+      macro avg     1.0000    1.0000    1.0000        30
+   weighted avg     1.0000    1.0000    1.0000        30
 
 
 3. TEST SET CONFUSION MATRIX:

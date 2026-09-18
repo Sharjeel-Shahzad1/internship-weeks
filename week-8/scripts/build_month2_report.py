@@ -555,3 +555,4 @@ def build_report() -> Path:
 
 if __name__ == "__main__":
     build_report()
+

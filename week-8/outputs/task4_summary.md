@@ -34,7 +34,7 @@ On the independent, held-out test partition (30 unseen flower specimens: 10 *Iri
 - **Macro-Averaged Recall:** **1.0000** (100.00%)
 - **Macro-Averaged F1-Score:** **1.0000** (100.00%)
 - **Mean 5-Fold Stratified CV Accuracy:** **96.67%** (with std: 0.0167)
-- **Optimal Hyperparameters:** `{'C': 2.0, 'gamma': 0.05, 'kernel': 'rbf'}`
+- **Optimal Hyperparameters:** `{'C': 2.0, 'gamma': 0.1, 'kernel': 'rbf'}`
 
 ---
 
@@ -60,7 +60,7 @@ While all four classifiers achieve 100% test accuracy on the 30-sample test spli
 
 ### Challenge 1: Resolving the Overlapping Versicolor-Virginica Feature Boundary
 - **Phenomenon:** Exploratory data analysis in Week 7 demonstrated that while *Iris-setosa* is cleanly and linearly separable from the other two species (petal length < 2.0 cm), *Iris-versicolor* and *Iris-virginica* share overlapping distributions in sepal length, sepal width, and petal width.
-- **Resolution:** By projecting features into an RBF kernel space with tuned bandwidth `gamma = 0.05` and regularizer `C = 2.0`, the boundary instances are separated by a curved, maximum-margin decision manifold, completely resolving ambiguity.
+- **Resolution:** By projecting features into an RBF kernel space with tuned bandwidth `gamma = 0.1` and regularizer `C = 2.0`, the boundary instances are separated by a curved, maximum-margin decision manifold, completely resolving ambiguity.
 
 ### Challenge 2: Distance Metric Sensitivity to Feature Scales
 - **Phenomenon:** Features had varying empirical ranges (Sepal length up to 7.9 cm vs. Petal width down to 0.1 cm). In distance-dependent classifiers (KNN and SVM), larger features would dominate Euclidean distance metrics.

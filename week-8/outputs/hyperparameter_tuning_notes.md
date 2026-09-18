@@ -34,7 +34,7 @@ Total evaluated parameter candidates: **51 candidate combinations** across 5 fol
 After systematic cross-validation, the optimal parameter set identified was:
 
 ```python
-best_svm_params = {'C': 2.0, 'gamma': 0.05, 'kernel': 'rbf'}
+best_svm_params = {'C': 2.0, 'gamma': 0.1, 'kernel': 'rbf'}
 ```
 
 - **Mean 5-Fold Cross-Validation Accuracy:** **0.9667** (96.67%)
@@ -48,7 +48,7 @@ best_svm_params = {'C': 2.0, 'gamma': 0.05, 'kernel': 'rbf'}
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
 | **Baseline Logistic Regression** | Linear | 1.0 | N/A | 95.83% | 100.00% | 1.0000 |
 | **Default SVM (Monday)** | RBF | 1.0 | 'scale' | 95.83% | 100.00% | 1.0000 |
-| **Tuned SVM (Wednesday)** | **rbf** | **2.0** | **0.05** | **96.67%** | **96.67%** | **0.9659** |
+| **Tuned SVM (Wednesday)** | **rbf** | **2.0** | **0.1** | **96.67%** | **100.00%** | **1.0000** |
 
 ---
 
